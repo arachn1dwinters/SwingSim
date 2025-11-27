@@ -12,6 +12,10 @@ using namespace std;
 struct Point {
     double X, Y;
 };
+inline Point PlayerSpawn = {315, 400};
+inline Point TargetPos = {615, 400};
+// Note to future Isaac: "inline" means that these variables can be defined in every file that includes
+// definitions.hpp
 
 // Game functions
 void Update();
@@ -20,7 +24,7 @@ void Draw(ALLEGRO_FONT *font, ALLEGRO_MOUSE_STATE state);
 // GameObject class, functions
 class GameObject {
     public:
-        Point Pos = {315, 400};
+        Point Pos = PlayerSpawn;
 
         void ApplyPhysics();
         void DecideIncrement(double RopeLength);
@@ -34,7 +38,6 @@ class GameObject {
         bool Stationary = false;
         double IncrementIncrement = 0.0005;
         bool CurrentlySwingingRight = true;
-        Point TargetPos = {615, 400};
 };
 
 enum SwingTypes {
@@ -42,5 +45,9 @@ enum SwingTypes {
     LEFT,
     HANG
 };
+
+// Utility Functions
+double DecideAngle(Point Pos, Point Origin);
+Point DecidePoint(Point Origin, double Angle, double DistanceFromOrigin);
 
 #endif

@@ -84,9 +84,6 @@ void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
                                      Player.Pos.X + 25, Player.Pos.Y + 25,
                                      5, 5, al_map_rgb(255, 255, 255));
 
-    // Draw grapple target
-    Point TargetPos = {615, 400};
-
     al_draw_filled_rounded_rectangle(TargetPos.X - 25, TargetPos.Y - 25,
                                      TargetPos.X + 25, TargetPos.Y + 25,
                                      5, 5, al_map_rgb(191, 63, 82));
@@ -94,8 +91,8 @@ void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
     // Draw curved line
     if (Player.Swinging) {
         // Calculate the midpoint and distance
-        float dx = Player.TargetPos.X - Player.Pos.X;
-        float dy = Player.TargetPos.Y - Player.Pos.Y;
+        float dx = TargetPos.X - Player.Pos.X;
+        float dy = TargetPos.Y - Player.Pos.Y;
         float distance = sqrt(dx * dx + dy * dy);
 
         // Define the arc height (adjust this to control how curved the arc is)
