@@ -1,53 +1,48 @@
 #include "definitions.hpp"
 
 // Because of convenience this also decides the rope amplitude
-void GameObject::DecideIncrement(double RopeLength) {
-    int FinalIncrementMultiplier = CurrentlySwingingRight ? 1 : -1;
-    
-    if (AngleIncrement == 0) {
-        // Flip direction
-        FinalIncrementMultiplier = -FinalIncrementMultiplier;
-        CurrentlySwingingRight = !CurrentlySwingingRight;
-    }
+void GameObject::DecideIncrement() {
+    AngleIncrement = fabs(AngleIncrement);
 
-    int RopeAmplitudeMultipler = FinalIncrementMultiplier;
-
-    bool DirectionChanged = (AngleIncrement > 0 && FinalIncrementMultiplier == -1) || 
-                            (AngleIncrement < 0 && FinalIncrementMultiplier == 1);
-
-    Point DistanceFromTarget = {TargetPos.X - Pos.X, TargetPos.Y - TargetPos.Y};
-    int IncrementIncrementMultiplier;
-    if ((DistanceFromTarget.X > 0 && !CurrentlySwingingRight) || (DistanceFromTarget.X < 0 && CurrentlySwingingRight)) {
-        IncrementIncrementMultiplier = -1;
-    } else if ((DistanceFromTarget.X > 0 && CurrentlySwingingRight) || (DistanceFromTarget.X < 0  && !CurrentlySwingingRight)) {
-        IncrementIncrementMultiplier = 1;
-    }
+    Point DistanceFromTarget = {TargetPos.X - Pos.X, TargetPos.Y - Pos.Y};
+    double dx = DistanceFromTarget.X;
+    double RopeLength = hypot(DistanceFromTarget.X, DistanceFromTarget.Y);
 
     // When DistanceFromTarget is the RopeLength we want the RopeAmplitude to be 2, when it is 0 we want it to be 0
-    RopeAmplitude = DistanceFromTarget.X / RopeLength * 2;
+    RopeAmplitude = dx / RopeLength * 2;
 
-    double LocalIncrementIncrement = IncrementIncrement * M_PI * IncrementIncrementMultiplier;
-    AngleIncrement = !Stationary ? FinalIncrementMultiplier * (AngleIncrement + LocalIncrementIncrement) : 0;
-
-    if (DirectionChanged) {
-        double DampingFactor = 0.99;
-        AngleIncrement *= DampingFactor;
+    if ((SwingingRight && dx < 0) || (!SwingingRight && dx > 0)) {
+        // Decrease AngleIncrement
+        AngleIncrement -= IncrementIncrement;
+    } else if ((SwingingRight && dx > 0) || (!SwingingRight && dx < 0)) {
+        // Increase AngleIncrement
+        AngleIncrement += IncrementIncrement;
     }
 
-    if (fabs(AngleIncrement) < 0.001 && fabs(DistanceFromTarget.X) < 10) {
+    if (!SwingingRight) AngleIncrement = -AngleIncrement;
+
+    RopeAmplitude = (dx / RopeLength) * 2;
+
+    if (fabs(AngleIncrement) < 0.001 && fabs(dx) < 10) {
         AngleIncrement = 0;
         Stationary = true;
+    } else if (fabs(AngleIncrement) < 0.001 && RopeLength - fabs(dx) < 0.001) {
+        // Change Direction
+
+        double DampingFactor = 0.9;
+        AngleIncrement *= DampingFactor;
+
+        SwingingRight = !SwingingRight;
     }
 };
 
 void GameObject::Swing() {
     if (!Stationary) {
         Point DistanceFromTarget = {TargetPos.X - Pos.X, TargetPos.Y - Pos.Y};
-        double RopeLength = sqrt(pow(DistanceFromTarget.X, 2) + pow(DistanceFromTarget.Y, 2));
+        double RopeLength = hypot(DistanceFromTarget.X, DistanceFromTarget.Y);
         
-        DecideIncrement(RopeLength);
-        CurrentAngle = DecideAngle(Pos, TargetPos);
-        CurrentAngle = CurrentAngle + AngleIncrement;
+        DecideIncrement();
+        CurrentAngle = DecideAngle(Pos, TargetPos) + AngleIncrement;
         Pos = DecidePoint(TargetPos, CurrentAngle, RopeLength);
     }
 }
@@ -62,3 +57,12 @@ void GameObject::ApplyPhysics() {
         }
     } 
 };
+
+void GameObject::StartSwinging() {
+    if (!Swinging) {
+        double dx = TargetPos.X - Pos.X;
+        SwingingRight = dx > 0;
+
+        Swinging = true;
+    }
+}

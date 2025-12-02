@@ -12,10 +12,10 @@ using namespace std;
 struct Point {
     double X, Y;
 };
-inline Point PlayerSpawn = {315, 400};
+inline Point PlayerSpawn = {915, 400};
 inline Point TargetPos = {615, 400};
-// Note to future Isaac: "inline" means that these variables can be defined in every file that includes
-// definitions.hpp
+/* Note to future Isaac: "inline" means that these variables can be defined in every file that includes
+ definitions.hpp*/
 
 // Game functions
 void Update();
@@ -27,8 +27,9 @@ class GameObject {
         Point Pos = PlayerSpawn;
 
         void ApplyPhysics();
-        void DecideIncrement(double RopeLength);
+        void DecideIncrement();
         void Swing();
+        void StartSwinging();
         bool UsesPhysics = true;
         bool Swinging = false;
         double FallingVelocity = 0; // only used on falling physics objects
@@ -36,8 +37,8 @@ class GameObject {
         double CurrentAngle; // Testing purposes
         float RopeAmplitude = 0;
         bool Stationary = false;
-        double IncrementIncrement = 0.0005;
-        bool CurrentlySwingingRight = true;
+        double IncrementIncrement = 0.0005 * M_PI;
+        bool SwingingRight;
 };
 
 enum SwingTypes {

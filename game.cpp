@@ -46,7 +46,7 @@ int main()
             Update();
             Redraw = true;
         } else if (Event.type == ALLEGRO_EVENT_KEY_DOWN) {
-            Player.Swinging = true;
+            Player.StartSwinging();
         }
         else if (Event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             Running = false;
@@ -77,7 +77,7 @@ void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
     al_clear_to_color(al_map_rgb(0, 0, 0));
     
     // Top left text
-    al_draw_text(Font, al_map_rgb(255, 255, 255), 5, 5, 0, (std::to_string(Player.IncrementIncrement) + "; " + std::to_string(Player.CurrentAngle)).c_str());
+    al_draw_text(Font, al_map_rgb(255, 255, 255), 5, 5, 0, (std::to_string(Player.AngleIncrement) + "; ").c_str());
 
     // Draw player
     al_draw_filled_rounded_rectangle(Player.Pos.X - 25, Player.Pos.Y - 25,
