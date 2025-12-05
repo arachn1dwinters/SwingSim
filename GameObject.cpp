@@ -23,13 +23,12 @@ void GameObject::DecideIncrement() {
 
     RopeAmplitude = (dx / RopeLength) * 2;
 
-    if (fabs(AngleIncrement) < 0.001 && fabs(dx) < 10) {
+    if (fabs(AngleIncrement) < 1e-10 && fabs(dx) < 10) {
         AngleIncrement = 0;
         Stationary = true;
-    } else if (fabs(AngleIncrement) < 0.001 && RopeLength - fabs(dx) < 0.001) {
+    } else if (fabs(AngleIncrement) < 1e-10 && RopeLength - fabs(dx) < 0.001) {
         // Change Direction
-
-        double DampingFactor = 0.9;
+        double DampingFactor = 0.99;
         AngleIncrement *= DampingFactor;
 
         SwingingRight = !SwingingRight;
