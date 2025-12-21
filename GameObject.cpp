@@ -29,12 +29,7 @@ void GameObject::DecideIncrement() {
             Stationary = true;
         } else {
             // Change Direction
-            double DampingFactor = 0.9;
-            AngleIncrement *= DampingFactor;
-
             SwingingRight = !SwingingRight;
-
-            std::cout << "Switch Directions!";
         }
     }
 };
@@ -45,6 +40,7 @@ void GameObject::Swing() {
         double RopeLength = hypot(DistanceFromTarget.X, DistanceFromTarget.Y);
         
         DecideIncrement();
+
         CurrentAngle = DecideAngle(Pos, TargetPos) + AngleIncrement;
         Pos = DecidePoint(TargetPos, CurrentAngle, RopeLength);
     }
