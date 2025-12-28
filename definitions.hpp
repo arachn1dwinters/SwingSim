@@ -25,11 +25,13 @@ void Draw(ALLEGRO_FONT *font, ALLEGRO_MOUSE_STATE state);
 class GameObject {
     public:
         Point Pos = PlayerSpawn;
-
+        Point Momentum = {0, 0};
+        Point LastMovement = {0, 0};
         void ApplyPhysics();
         void DecideIncrement();
         void Swing();
         void StartSwinging();
+        void StopSwinging();
         bool UsesPhysics = true;
         bool Swinging = false;
         double FallingVelocity = 0; // only used on falling physics objects

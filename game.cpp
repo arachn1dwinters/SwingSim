@@ -47,6 +47,8 @@ int main()
             Redraw = true;
         } else if (Event.type == ALLEGRO_EVENT_KEY_DOWN) {
             Player.StartSwinging();
+        } else if (Event.type == ALLEGRO_EVENT_KEY_UP) {
+            Player.StopSwinging();
         }
         else if (Event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             Running = false;

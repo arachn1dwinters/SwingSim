@@ -1,5 +1,7 @@
 #include "definitions.hpp"
 
+void MoveTowardsZero(double* number, double changeBy);
+
 // Because of convenience this also decides the rope amplitude
 void GameObject::DecideIncrement() {
     AngleIncrement = fabs(AngleIncrement);
@@ -42,7 +44,10 @@ void GameObject::Swing() {
         DecideIncrement();
 
         CurrentAngle = DecideAngle(Pos, TargetPos) + AngleIncrement;
+
+        Point OldPos = Pos;
         Pos = DecidePoint(TargetPos, CurrentAngle, RopeLength);
+        LastMovement = {Pos.X - OldPos.Y, Pos.Y - OldPos.Y};
     }
 }
 
@@ -51,6 +56,15 @@ void GameObject::ApplyPhysics() {
         if (!Swinging) {
             FallingVelocity += 1;
             Pos.Y += FallingVelocity;
+
+            if (Momentum.X != 0 || Momentum.Y != 0) {
+                double changeMomentumBy = 15;
+
+                Pos.X += Momentum.X;
+                MoveTowardsZero(&Momentum.X, changeMomentumBy);
+                Pos.Y += Momentum.Y;
+                MoveTowardsZero(&Momentum.Y, changeMomentumBy);
+            }
         } else {
             Swing();
         }
@@ -63,5 +77,23 @@ void GameObject::StartSwinging() {
         SwingingRight = dx > 0;
 
         Swinging = true;
+
+        FallingVelocity = 0;
+    }
+}
+
+void GameObject::StopSwinging() {
+    if (Swinging) {
+        Momentum = LastMovement;
+        Swinging = false;
+    }
+}
+
+void MoveTowardsZero(double* number, double changeBy)
+{
+    if (*number > 0) {
+        *number -= *number > changeBy ? changeBy : *number;
+    } else {
+        *number += abs(*number) > changeBy ? changeBy : abs(*number);
     }
 }
