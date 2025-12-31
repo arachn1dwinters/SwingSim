@@ -12,8 +12,8 @@ using namespace std;
 struct Point {
     double X, Y;
 };
-inline Point PlayerSpawn = {915, 400};
-inline Point TargetPos = {615, 400};
+inline Point PlayerSpawn = {915, 0};
+inline Point TargetPos = {615, 100};
 /* Note to future Isaac: "inline" means that these variables can be defined in every file that includes
  definitions.hpp*/
 

@@ -75,10 +75,9 @@ void GameObject::StartSwinging() {
     if (!Swinging) {
         double dx = TargetPos.X - Pos.X;
         SwingingRight = dx > 0;
-
         Swinging = true;
-
         FallingVelocity = 0;
+        AngleIncrement = 0.013 * M_PI;
     }
 }
 

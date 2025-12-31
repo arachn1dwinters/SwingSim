@@ -19,7 +19,7 @@ int main()
     const double FPS = 60.0;
     ALLEGRO_TIMER* Timer = al_create_timer(1.0 / FPS);
     ALLEGRO_EVENT_QUEUE* Queue = al_create_event_queue();
-    ALLEGRO_DISPLAY* Disp = al_create_display(1280, 800);
+    ALLEGRO_DISPLAY* Disp = al_create_display(1480, 800);
     ALLEGRO_FONT* Font = al_create_builtin_font();
 
     if (!Timer || !Queue || !Disp || !Font) {
@@ -36,22 +36,48 @@ int main()
     ALLEGRO_EVENT Event;
 
     al_start_timer(Timer);
+
+    // Keyboard Input Stuff
+    #define KEY_SEEN    1
+    #define KEY_DOWN    2
+
+    unsigned char key[ALLEGRO_KEY_MAX];
+    memset(key, 0, sizeof(key));
+
     while (Running)
     {
         al_wait_for_event(Queue, &Event);
         ALLEGRO_MOUSE_STATE state;
-        if (Event.type == ALLEGRO_EVENT_TIMER) {
-            al_get_mouse_state(&state);
 
-            Update();
-            Redraw = true;
-        } else if (Event.type == ALLEGRO_EVENT_KEY_DOWN) {
-            Player.StartSwinging();
-        } else if (Event.type == ALLEGRO_EVENT_KEY_UP) {
-            Player.StopSwinging();
-        }
-        else if (Event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            Running = false;
+        switch (Event.type) {
+            case ALLEGRO_EVENT_TIMER:
+                al_get_mouse_state(&state);
+
+                Update();
+                Redraw = true;
+
+                // Check if a key was pressed
+                if(key[ALLEGRO_KEY_SPACE])
+                    Player.StartSwinging();
+                else
+                    Player.StopSwinging();
+
+                for(int i = 0; i < ALLEGRO_KEY_MAX; i++)
+                    key[i] &= ~KEY_SEEN;
+
+                break;
+            case ALLEGRO_EVENT_KEY_DOWN:
+                key[Event.keyboard.keycode] = KEY_SEEN | KEY_DOWN;
+
+                break;
+            case ALLEGRO_EVENT_KEY_UP:
+                key[Event.keyboard.keycode] &= ~KEY_DOWN;
+
+                break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                Running = false;
+
+                break;
         }
 
         if (Redraw && al_is_event_queue_empty(Queue))
@@ -81,13 +107,14 @@ void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
     // Top left text
     al_draw_text(Font, al_map_rgb(255, 255, 255), 5, 5, 0, (std::to_string(Player.AngleIncrement) + "; ").c_str());
 
-    // Draw player
-    al_draw_filled_rounded_rectangle(Player.Pos.X - 25, Player.Pos.Y - 25,
-                                     Player.Pos.X + 25, Player.Pos.Y + 25,
+    // Draw Player
+    al_draw_filled_rounded_rectangle(Player.Pos.X - 15, Player.Pos.Y - 15,
+                                     Player.Pos.X + 15, Player.Pos.Y + 15,
                                      5, 5, al_map_rgb(255, 255, 255));
-
-    al_draw_filled_rounded_rectangle(TargetPos.X - 25, TargetPos.Y - 25,
-                                     TargetPos.X + 25, TargetPos.Y + 25,
+    
+    // Draw Target
+    al_draw_filled_rounded_rectangle(TargetPos.X - 15, TargetPos.Y - 15,
+                                     TargetPos.X + 15, TargetPos.Y + 15,
                                      5, 5, al_map_rgb(191, 63, 82));
 
     // Draw curved line
