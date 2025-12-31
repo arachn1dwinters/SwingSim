@@ -38,8 +38,8 @@ int main()
     al_start_timer(Timer);
 
     // Keyboard Input Stuff
-    #define KEY_SEEN    1
-    #define KEY_DOWN    2
+    #define KEY_SEEN    1 // Key is either currently down or has been down but hasn't been dealt with by game logic
+    #define KEY_DOWN    2 // Key is currently down
 
     unsigned char key[ALLEGRO_KEY_MAX];
     memset(key, 0, sizeof(key));
@@ -57,10 +57,22 @@ int main()
                 Redraw = true;
 
                 // Check if a key was pressed
-                if(key[ALLEGRO_KEY_SPACE])
+                if(key[ALLEGRO_KEY_Z])
                     Player.StartSwinging();
                 else
                     Player.StopSwinging();
+
+                if(key[ALLEGRO_KEY_X] && Player.CanJump)
+                    Player.Jump();
+
+                if(key[ALLEGRO_KEY_R])
+                {
+                    Player.Pos = PlayerSpawn;
+                    Player.Swinging = false;
+                    Player.LastMovement = {0, 0};
+                    Player.Momentum = {0, 0};
+                    Player.FallingVelocity = 0;
+                }
 
                 for(int i = 0; i < ALLEGRO_KEY_MAX; i++)
                     key[i] &= ~KEY_SEEN;

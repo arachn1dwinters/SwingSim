@@ -13,7 +13,7 @@ struct Point {
     double X, Y;
 };
 inline Point PlayerSpawn = {915, 0};
-inline Point TargetPos = {615, 100};
+inline Point TargetPos = {740, 100};
 /* Note to future Isaac: "inline" means that these variables can be defined in every file that includes
  definitions.hpp*/
 
@@ -32,6 +32,7 @@ class GameObject {
         void Swing();
         void StartSwinging();
         void StopSwinging();
+        void Jump();
         bool UsesPhysics = true;
         bool Swinging = false;
         double FallingVelocity = 0; // only used on falling physics objects
@@ -41,6 +42,8 @@ class GameObject {
         bool Stationary = false;
         double IncrementIncrement = 0.0005 * M_PI;
         bool SwingingRight;
+        bool CanJump;
+        double JumpCharge = 1.0;
 };
 
 enum SwingTypes {

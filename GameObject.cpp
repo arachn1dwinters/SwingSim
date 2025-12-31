@@ -45,13 +45,13 @@ void GameObject::Swing() {
 
         CurrentAngle = DecideAngle(Pos, TargetPos) + AngleIncrement;
 
-        Point OldPos = Pos;
         Pos = DecidePoint(TargetPos, CurrentAngle, RopeLength);
-        LastMovement = {Pos.X - OldPos.X, Pos.Y - OldPos.Y};
     }
 }
 
 void GameObject::ApplyPhysics() {
+    Point OldPos = Pos;
+
     if (UsesPhysics) {
         if (!Swinging) {
             FallingVelocity += 1;
@@ -65,10 +65,17 @@ void GameObject::ApplyPhysics() {
                 Pos.Y += Momentum.Y;
                 MoveTowardsZero(&Momentum.Y, changeMomentumBy);
             }
+
+            if (JumpCharge < 1.0)
+                JumpCharge += 0.02;
+            else
+                CanJump = true;
         } else {
             Swing();
         }
-    } 
+    }
+
+    LastMovement = {Pos.X - OldPos.X, Pos.Y - OldPos.Y};
 };
 
 void GameObject::StartSwinging() {
@@ -95,4 +102,11 @@ void MoveTowardsZero(double* number, double changeBy)
     } else {
         *number += abs(*number) > changeBy ? changeBy : abs(*number);
     }
+}
+
+void GameObject::Jump() {
+    Momentum.Y -= 30;
+    FallingVelocity = 0;
+    JumpCharge = 0;
+    CanJump = false;
 }
