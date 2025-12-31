@@ -1,3 +1,3 @@
 # SwingSim
 
-A grappling hook swinging algorithm written in c++. Although the graphics for this are implemented in Allegro, the code is very easy to port: just take the GameObject class (and its methods) from the  `definitions.hpp` and `defitions.cpp` files.
+A grappling hook swinging algorithm written in c++. Although the graphics for this are implemented in Allegro, the code is very easy to port: just use the  `definitions.hpp`, `definitions.cpp`, and `GameObject.cpp` files.
