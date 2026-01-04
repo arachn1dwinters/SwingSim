@@ -54,7 +54,7 @@ void GameObject::ApplyPhysics() {
 
     if (UsesPhysics) {
         if (!Swinging) {
-            FallingVelocity += 1;
+            FallingVelocity += Gravity;
             Pos.Y += FallingVelocity;
 
             if (Momentum.X != 0 || Momentum.Y != 0) {

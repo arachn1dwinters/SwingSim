@@ -65,6 +65,9 @@ int main()
                 if(key[ALLEGRO_KEY_X] && Player.CanJump)
                     Player.Jump();
 
+                if(key[ALLEGRO_KEY_C] && Player.Gravity == 0)
+                    Player.Gravity = 1.0;
+
                 if(key[ALLEGRO_KEY_R])
                 {
                     Player.Pos = PlayerSpawn;
@@ -117,12 +120,16 @@ void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
     al_clear_to_color(al_map_rgb(0, 0, 0));
     
     // Top left text
-    al_draw_text(Font, al_map_rgb(255, 255, 255), 5, 5, 0, (std::to_string(Player.AngleIncrement) + "; ").c_str());
+    // al_draw_text(Font, al_map_rgb(255, 255, 255), 5, 5, 0, (std::to_string(Player.AngleIncrement) + "; ").c_str());
 
     // Draw Player
     al_draw_filled_rounded_rectangle(Player.Pos.X - 15, Player.Pos.Y - 15,
                                      Player.Pos.X + 15, Player.Pos.Y + 15,
                                      5, 5, al_map_rgb(255, 255, 255));
+    // Draw Jump Charge Indicator
+    // al_draw_filled_rounded_rectangle(Player.Pos.X - 15, Player.Pos.Y - 15 + (30 * Player.JumpCharge),
+    //                                  Player.Pos.X + 15, Player.Pos.Y + 15,
+    //                                  5, 5, al_map_rgb(23, 95, 189));
     
     // Draw Target
     al_draw_filled_rounded_rectangle(TargetPos.X - 15, TargetPos.Y - 15,

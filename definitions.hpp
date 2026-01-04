@@ -12,7 +12,7 @@ using namespace std;
 struct Point {
     double X, Y;
 };
-inline Point PlayerSpawn = {915, 0};
+inline Point PlayerSpawn = {1215, 300};
 inline Point TargetPos = {740, 100};
 /* Note to future Isaac: "inline" means that these variables can be defined in every file that includes
  definitions.hpp*/
@@ -44,6 +44,7 @@ class GameObject {
         bool SwingingRight;
         bool CanJump;
         double JumpCharge = 1.0;
+        double Gravity = 0; 
 };
 
 enum SwingTypes {
