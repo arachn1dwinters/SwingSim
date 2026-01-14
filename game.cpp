@@ -1,8 +1,12 @@
+#include <cstdlib>
+
 #include "definitions.hpp"
 
 GameObject Player;
 
 void update();
+void RandomEvents();
+void FireLaser();
 void draw(ALLEGRO_FONT *Font);
 
 Point MousePos = {0, 0};
@@ -55,6 +59,8 @@ int main()
 
                 Update();
                 Redraw = true;
+
+                RandomEvents();
 
                 // Check if a key was pressed
                 if(key[ALLEGRO_KEY_Z])
@@ -110,6 +116,23 @@ int main()
 void Update()
 {
     Player.ApplyPhysics();
+}
+
+int laserTimer = 0;
+void RandomEvents()
+{
+    if (laserTimer == 0)
+    {
+        FireLaser();
+        laserTimer = (rand() % 31) + 10; // Randum num between 10 and 40
+    } else
+    {
+        laserTimer--;
+    }
+}
+
+void FireLaser() {
+
 }
 
 void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
