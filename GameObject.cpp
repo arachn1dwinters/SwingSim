@@ -14,10 +14,8 @@ void GameObject::DecideIncrement() {
     RopeAmplitude = dx / RopeLength * 2;
 
     if ((SwingingRight && dx < 0) || (!SwingingRight && dx > 0)) {
-        // Decrease AngleIncrement
         AngleIncrement -= IncrementIncrement;
     } else if ((SwingingRight && dx > 0) || (!SwingingRight && dx < 0)) {
-        // Increase AngleIncrement
         AngleIncrement += IncrementIncrement;
     }
 
