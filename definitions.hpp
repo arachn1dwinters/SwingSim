@@ -46,6 +46,15 @@ class GameObject {
         double JumpCharge = 1.0;
 };
 
+class Laser {
+    public:
+        bool Active = false;
+
+        int Orientation; // 1: Vertical; 2: Horizontal
+        double Pos; // 0 <= Pos <= 1; The percentage of the screen width or height that the laser is at
+        bool Dangerous;
+};
+
 enum SwingTypes {
     RIGHT,
     LEFT,

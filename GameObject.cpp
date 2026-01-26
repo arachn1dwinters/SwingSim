@@ -44,8 +44,25 @@ void GameObject::Swing() {
         DecideIncrement();
 
         CurrentAngle = DecideAngle(Pos, TargetPos) + AngleIncrement;
+        Point NewPos = DecidePoint(TargetPos, CurrentAngle, RopeLength);
 
-        Pos = DecidePoint(TargetPos, CurrentAngle, RopeLength);
+        if (NewPos.Y < 740 && NewPos.Y > 60 && NewPos.X < 1420 && NewPos.X > 60)
+        {
+            Pos = NewPos;
+        } else {
+            Swinging = false;
+            // Long story. couldn't figure out clamp.
+
+            if (NewPos.X < 60) 
+                NewPos.X = 60;
+            if (NewPos.X > 1420)
+                NewPos.X = 1420;
+            if (NewPos.Y < 60)
+                NewPos.Y = 60;
+            if (NewPos.Y > 740)
+                NewPos.Y = 740;
+            Pos = NewPos;
+        }
     }
 }
 
@@ -54,15 +71,22 @@ void GameObject::ApplyPhysics() {
 
     if (UsesPhysics) {
         if (!Swinging) {
-            FallingVelocity += 1;
-            Pos.Y += FallingVelocity;
+            if (Pos.Y < 740) {
+                FallingVelocity += 1;
+                Pos.Y += FallingVelocity;
+            }
 
             if (Momentum.X != 0 || Momentum.Y != 0) {
                 double changeMomentumBy = 0.5;
 
-                Pos.X += Momentum.X;
+                if (Pos.X < 1420 && Pos.X > 60) {
+                    Pos.X += Momentum.X;
+                }
+
                 MoveTowardsZero(&Momentum.X, changeMomentumBy);
-                Pos.Y += Momentum.Y;
+                if (Pos.Y < 740 && Pos.Y > 60) {
+                    Pos.Y += Momentum.Y;
+                }
                 MoveTowardsZero(&Momentum.Y, changeMomentumBy);
             }
 

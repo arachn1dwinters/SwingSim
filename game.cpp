@@ -3,13 +3,16 @@
 #include "definitions.hpp"
 
 GameObject Player;
+Laser ActiveLaser;
 
 void update();
-void RandomEvents();
+void TimerEvents();
 void FireLaser();
 void draw(ALLEGRO_FONT *Font);
 
 Point MousePos = {0, 0};
+
+Point ScreenSize = {1480, 800};
 
 int main()
 {
@@ -23,7 +26,7 @@ int main()
     const double FPS = 60.0;
     ALLEGRO_TIMER* Timer = al_create_timer(1.0 / FPS);
     ALLEGRO_EVENT_QUEUE* Queue = al_create_event_queue();
-    ALLEGRO_DISPLAY* Disp = al_create_display(1480, 800);
+    ALLEGRO_DISPLAY* Disp = al_create_display(ScreenSize.X, ScreenSize.Y);
     ALLEGRO_FONT* Font = al_create_builtin_font();
 
     if (!Timer || !Queue || !Disp || !Font) {
@@ -60,12 +63,10 @@ int main()
                 Update();
                 Redraw = true;
 
-                RandomEvents();
-
                 // Check if a key was pressed
                 if(key[ALLEGRO_KEY_Z])
                     Player.StartSwinging();
-                else
+                else if (Player.Swinging)
                     Player.StopSwinging();
 
                 if(key[ALLEGRO_KEY_X] && Player.CanJump)
@@ -116,23 +117,45 @@ int main()
 void Update()
 {
     Player.ApplyPhysics();
+
+    TimerEvents();
 }
 
 int laserTimer = 0;
-void RandomEvents()
+int activeLaserTimer = 0;
+void TimerEvents()
 {
+    // Fire a laser?
     if (laserTimer == 0)
     {
         FireLaser();
         laserTimer = (rand() % 31) + 10; // Randum num between 10 and 40
-    } else
+    } else if (!ActiveLaser.Active)
     {
         laserTimer--;
+    }
+
+    // If a laser is active
+    if (ActiveLaser.Active) {
+        switch (activeLaserTimer) {
+            case 3:
+                ActiveLaser.Dangerous = true;
+                break;
+            case 10:
+                ActiveLaser.Active = false;
+                break;
+        }
+
+        activeLaserTimer++;
     }
 }
 
 void FireLaser() {
-
+    ActiveLaser.Active = true;
+    ActiveLaser.Dangerous = false;
+    int orientation = rand() % 3; // 2: Vertical; 1: Horizontal
+    ActiveLaser.Orientation = orientation;
+    ActiveLaser.Pos = rand() % 71 + 15;
 }
 
 void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
@@ -151,6 +174,24 @@ void Draw(ALLEGRO_FONT *Font, ALLEGRO_MOUSE_STATE state)
     al_draw_filled_rounded_rectangle(TargetPos.X - 15, TargetPos.Y - 15,
                                      TargetPos.X + 15, TargetPos.Y + 15,
                                      5, 5, al_map_rgb(191, 63, 82));
+
+    // Draw Laser
+    if (ActiveLaser.Active) {
+        switch (ActiveLaser.Orientation) {
+            case 1:
+                // Vertical
+                {
+                    float xPos = ActiveLaser.Pos * ScreenSize.X;
+                    al_draw_line(xPos, 0, xPos, ScreenSize.Y, al_map_rgb(191, 63, 82), 4);
+                    break;
+                }
+            case 2:
+                // Horizontal
+                float yPos = ActiveLaser.Pos * ScreenSize.Y;
+                al_draw_line(0, yPos, ScreenSize.X, yPos, al_map_rgb(191, 63, 82), 4);
+                break;
+        } 
+    }
 
     // Draw curved line
     if (Player.Swinging) {
