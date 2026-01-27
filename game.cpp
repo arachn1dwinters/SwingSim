@@ -64,7 +64,7 @@ int main()
                 Redraw = true;
 
                 // Check if a key was pressed
-                if(key[ALLEGRO_KEY_Z])
+                if(key[ALLEGRO_KEY_Z] && !Player.BlockSwing)
                     Player.StartSwinging();
                 else if (Player.Swinging)
                     Player.StopSwinging();
